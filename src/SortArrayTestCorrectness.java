@@ -33,4 +33,9 @@ class SortArrayTestCorrectness {
         int result[] = sortArray.nonComparisonSort(true);
         assertTrue(checkSorting(result));
     }
+    @Test
+    void testHeapSort(){
+        int result[] = sortArray.heapSort();
+        assertTrue(checkSorting(result));
+    }
 }

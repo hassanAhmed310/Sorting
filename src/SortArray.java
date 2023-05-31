@@ -19,11 +19,20 @@ public class SortArray {
             e.printStackTrace();
         }
     }
+    //Check if Is sorted
+    private boolean checkSorting(int[] array){
+        for (int i=0;i<array.length-1;i++){
+            if(array[i] > array[i+1]){
+                return false;
+            }
+        }
+        return true;
+    }
     // Selection Sort
     public int[] simpleSort(boolean isSorted) {
-        if(!isSorted){
-            return this.array;
-        }
+//        if(checkSorting(this.array)){
+//            return this.array;
+//        }
         int result[] = this.array.clone();
         int n = result.length;
         for (int i = 0; i < n-1; i++){
@@ -35,16 +44,19 @@ public class SortArray {
             int temp = result[min_idx];
             result[min_idx] = result[i];
             result[i] = temp;
+            if(!isSorted){
+                System.out.println(Arrays.asList(result));
+            }
         }
         return result;
     }
     // Merge Sort
     public int[] efficientSort(boolean isSorted){
-        if(!isSorted){
-            return this.array;
-        }
+//        if(checkSorting(this.array)){
+//            return this.array;
+//        }
         int result[] = this.array.clone();
-        mergeSort(result, 0, result.length - 1);
+        mergeSort(result, 0, result.length - 1, isSorted);
         return result;
     }
     private void merge(int arr[], int l, int m, int r) {
@@ -88,22 +100,25 @@ public class SortArray {
             k++;
         }
     }
-    private void mergeSort(int arr[], int l, int r) {
+    private void mergeSort(int arr[], int l, int r, boolean isSorted) {
         if (l < r) {
             // Find the middle point
             int m = l + (r - l) / 2;
             // Sort first and second halves
-            mergeSort(arr, l, m);
-            mergeSort(arr, m + 1, r);
+            mergeSort(arr, l, m, isSorted);
+            mergeSort(arr, m + 1, r, isSorted);
+            if(!isSorted){
+                System.out.println(Arrays.asList(arr));
+            }
             // Merge the sorted halves
             merge(arr, l, m, r);
         }
     }
     // Counting Sort
     public int[] nonComparisonSort(boolean isSorted) {
-        if(!isSorted){
-            return this.array;
-        }
+//        if(!isSorted){
+//            return this.array;
+//        }
         int result[] = this.array.clone();
         if (result == null || result.length <= 1) {
             return result;
@@ -121,11 +136,16 @@ public class SortArray {
         for (int i = 0; i < result.length; i++) {
             count[result[i]]++;
         }
+        if(!isSorted){
+            System.out.println(Arrays.asList(result));
+        }
         // Modify the count array to store the actual position of each element in the sorted array
         for (int i = 1; i < count.length; i++) {
             count[i] += count[i - 1];
         }
-
+        if(!isSorted){
+            System.out.println(Arrays.asList(result));
+        }
         // Create a temporary output array
         int[] output = new int[result.length];
 
@@ -137,6 +157,66 @@ public class SortArray {
         // Copy the sorted elements from the output array to the original array
         System.arraycopy(output, 0, result, 0, result.length);
         return result;
+    }
+    public int[] heapSort(){
+        return heapSort(this.array.clone());
+    }
+    public static void maxHeapify(int[] arr, int i, int n) {
+        int largest = i;
+        int left = 2*i + 1;
+        int right = 2*i + 2;
+        if (left < n && arr[left] > arr[largest]) {
+            largest = left;
+        }
+        if (right < n && arr[right] > arr[largest]) {
+            largest = right;
+        }
+        if (largest != i) {
+            int temp = arr[i];
+            arr[i] = arr[largest];
+            arr[largest] = temp;
+            maxHeapify(arr, largest, n);
+        }
+    }
+    //BUILD-MAX-HEAP procedure:
+    public static void buildMaxHeap(int[] arr, int n) {
+        for (int i = n/2; i >= 0; i--) {
+            maxHeapify(arr, i, n);
+        }
+    }
+    //HEAPSORT:
+    private int[] heapSort(int[] arr) {
+        int n = arr.length;
+        buildMaxHeap(arr, n);
+        for (int i = n-1; i >= 1; i--) {
+            int temp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = temp;
+            maxHeapify(arr, 0, i);
+        }
+        return arr;
+    }
+    //MAX-HEAP-INSERT and HEAP-EXTRACT-MAX :
+    public static void maxHeapInsert(int[] arr, int key, int n) {
+        n++;
+        arr[n-1] = key;
+        int i = n-1;
+        while (i > 0 && arr[i] > arr[(i-1)/2]) {
+            int temp = arr[i];
+            arr[i] = arr[(i-1)/2];
+            arr[(i-1)/2] = temp;
+            i = (i-1)/2;
+        }
+    }
+    public static int heapExtractMax(int[] arr, int n) {
+        if (n < 1) {
+            return -1;
+        }
+        int maxVal = arr[0];
+        arr[0] = arr[n-1];
+        n--;
+        maxHeapify(arr, 0, n);
+        return maxVal;
     }
     public int[] getArray() {
         return array;
